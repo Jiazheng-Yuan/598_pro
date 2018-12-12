@@ -1,5 +1,6 @@
 import numpy as np
 #from boxtree.tools import DummyTimingFuture
+import math
 
 class CustomConstantOneExpansionWrangler(object):
     """This implements the 'analytical routines' for a Green's function that is
@@ -74,6 +75,7 @@ class CustomConstantOneExpansionWrangler(object):
                         ops += 1
 
         return mpoles#, self.timing_future(ops)
+    #eval_direct is for single core
 
     def eval_direct(self, target_boxes, neighbor_sources_starts,
             neighbor_sources_lists, src_weights):
@@ -97,6 +99,45 @@ class CustomConstantOneExpansionWrangler(object):
             ops += pot[tgt_pslice].size * nsrcs
 
         return pot#, self.timing_future(ops)
+    #multicore structure
+    def eval_direct_multicore(self,target_boxes, neighbor_sources_starts,
+            neighbor_sources_lists, src_weights, total_parts, part):
+        from time import time
+        ti = time()
+        pot = self.output_zeros()
+
+        length = math.ceil(self.tree.nboxes / total_parts)
+
+
+        ops = 0
+        seg_start = part * length
+        seg_end = seg_start + length
+
+        if part == total_parts - 1:
+            end = self.tree.nboxes
+        #print("total number of boxes is " + str(self.tree.nboxes) + ",start at :" + str(seg_start) + "    end at: " + str(seg_end))
+        for itgt_box, tgt_ibox in enumerate(target_boxes[seg_start:seg_end]):
+            itgt_box += seg_start
+            tgt_pslice = self._get_target_slice(tgt_ibox)
+
+            src_sum = 0
+            nsrcs = 0
+            start, end = neighbor_sources_starts[itgt_box:itgt_box + 2]
+            # print "DIR: %s <- %s" % (tgt_ibox, neighbor_sources_lists[start:end])
+            for src_ibox in neighbor_sources_lists[start:end]:
+                src_pslice = self._get_source_slice(src_ibox)
+                nsrcs += src_weights[src_pslice].size
+
+                src_sum += np.sum(src_weights[src_pslice])
+
+            pot[tgt_pslice] = src_sum
+            ops += pot[tgt_pslice].size * nsrcs
+        #print("executing direct eval for part"+str(part)+": "+str(time() - ti))
+        #print(pot)
+        return pot  # , self.timing_future(ops)
+    def balancer(self,target_boxes, neighbor_sources_starts,
+            neighbor_sources_lists, src_weights, total_parts, part):
+        pass
 
     def multipole_to_local(self,
             level_start_target_or_target_parent_box_nrs,

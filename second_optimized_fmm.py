@@ -118,30 +118,23 @@ class My_own_fmm:
 
     # {{{ "Stage 3:" Direct evaluation from neighbor source boxes ("list 1")
     def step3(self):
-        direct_interaction = self.wrangler.eval_direct(
+        self.direct_interaction = self.wrangler.eval_direct(
                 self.traversal.target_boxes,
                 self.traversal.neighbor_source_boxes_starts,
                 self.traversal.neighbor_source_boxes_lists,
                 self.src_weights)
 
         #self.recorder.add("eval_direct", self.timing_future)
-        return direct_interaction
+        return self.direct_interaction
 
-    def multicore_step3(self,total_processors,part):
-        direct_interaction = self.wrangler.eval_direct_multicore(
-            self.traversal.target_boxes,
-            self.traversal.neighbor_source_boxes_starts,
-            self.traversal.neighbor_source_boxes_lists,
-            self.src_weights,total_processors,part)
 
-        # self.recorder.add("eval_direct", self.timing_future)
-        return direct_interaction
     # these potentials are called alpha in [1]
 
     # }}}
 
     # {{{ "Stage 4:" translate separated siblings' ("list 2") mpoles to local
-    #4,6,7 combined because this is a parallel section, independent of other parts
+    #4,6 combined because this is a parallel section, independent of other parts
+    #because 6 depends on 4, they are not separated. 7 can be
     def step4(self):
         local_exps = self.wrangler.multipole_to_local(
             self.traversal.level_start_target_or_target_parent_box_nrs,
@@ -150,25 +143,11 @@ class My_own_fmm:
             self.traversal.from_sep_siblings_lists,
             self.mpole_exps)
         #original step 6
-        local_exps += self.wrangler.form_locals(
-            self.traversal.level_start_target_or_target_parent_box_nrs,
-            self.traversal.target_or_target_parent_boxes,
-            self.traversal.from_sep_bigger_starts,
-            self.traversal.from_sep_bigger_lists,
-            self.src_weights)
         #original step7
-        local_exps = self.wrangler.refine_locals(
-            self.traversal.level_start_target_or_target_parent_box_nrs,
-            self.traversal.target_or_target_parent_boxes,
-            local_exps)
-        #evaluation of the local expansion
-        local_result = self.wrangler.eval_locals(
-            self.traversal.level_start_target_box_nrs,
-            self.traversal.target_boxes,
-            local_exps)
+
 
         # self.recorder.add("refine_locals", self.timing_future)
-        return local_result
+        return local_exps
 
 
         #local_exps = local_exps + local_result
@@ -223,9 +202,7 @@ class My_own_fmm:
                 self.traversal.from_sep_bigger_lists,
                 self.src_weights)
 
-        self.recorder.add("form_locals", self.timing_future)
-
-        self.local_exps = self.local_exps + local_result
+        return local_result
         '''
 
         if self.traversal.from_sep_close_bigger_starts is not None:
