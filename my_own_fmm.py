@@ -68,7 +68,7 @@ class My_own_fmm:
         # to the expansion wrangler and should not be passed.
 
         #self.fmm_proc = ProcessLogger(logger, "qbx fmm")
-        self.recorder = TimingRecorder()
+        #self.recorder = TimingRecorder()
 
         self.src_weights = self.wrangler.reorder_sources(src_weights)
         self.traversal = traversal
@@ -169,6 +169,35 @@ class My_own_fmm:
 
         # self.recorder.add("refine_locals", self.timing_future)
         return local_result
+    def separate_step4(self):
+        return self.wrangler.multipole_to_local(
+            self.traversal.level_start_target_or_target_parent_box_nrs,
+            self.traversal.target_or_target_parent_boxes,
+            self.traversal.from_sep_siblings_starts,
+            self.traversal.from_sep_siblings_lists,
+            self.mpole_exps)
+    def separate_step6(self):
+        return self.wrangler.form_locals(
+            self.traversal.level_start_target_or_target_parent_box_nrs,
+            self.traversal.target_or_target_parent_boxes,
+            self.traversal.from_sep_bigger_starts,
+            self.traversal.from_sep_bigger_lists,
+            self.src_weights)
+    def multicore_separate_step4(self,total_processors,part):
+        return self.wrangler.multipole_to_local_multicore(
+            self.traversal.level_start_target_or_target_parent_box_nrs,
+            self.traversal.target_or_target_parent_boxes,
+            self.traversal.from_sep_siblings_starts,
+            self.traversal.from_sep_siblings_lists,
+            self.mpole_exps,total_processors,part)
+
+    def multicore_separate_step6(self,total_processors,part):
+        return self.wrangler.form_locals_multicore(
+            self.traversal.level_start_target_or_target_parent_box_nrs,
+            self.traversal.target_or_target_parent_boxes,
+            self.traversal.from_sep_bigger_starts,
+            self.traversal.from_sep_bigger_lists,
+            self.src_weights,total_processors,part)
 
 
         #local_exps = local_exps + local_result
@@ -190,27 +219,25 @@ class My_own_fmm:
 
         #self.recorder.add("eval_multipoles", self.timing_future)
 
-        self.potentials = self.potentials + self.mpole_result
+        potentials = self.potentials + self.mpole_result
         #self.wrangler.reorder_potentials(self.potentials)
-        return self.potentials
+
 
 
     # these potentials are called beta in [1]
-        '''
+
         if self.traversal.from_sep_close_smaller_starts is not None:
             logger.debug("evaluate separated close smaller interactions directly "
                     "('list 3 close')")
 
-            direct_result, self.timing_future = self.wrangler.eval_direct(
+            direct_result= self.wrangler.eval_direct(
                     self.traversal.target_boxes,
                     self.traversal.from_sep_close_smaller_starts,
                     self.traversal.from_sep_close_smaller_lists,
                     self.src_weights)
 
-            self.recorder.add("eval_direct", self.timing_future)
-
-            self.potentials = self.potentials + direct_result
-        '''
+            potentials = potentials + direct_result
+        return potentials
 
     # }}}
 
@@ -225,19 +252,20 @@ class My_own_fmm:
 
         self.recorder.add("form_locals", self.timing_future)
 
-        self.local_exps = self.local_exps + local_result
-        '''
+        local_exps = self.local_exps + local_result
+        return local_exps
+    def step6_extra(self):
 
         if self.traversal.from_sep_close_bigger_starts is not None:
-            direct_result, timing_future = self.wrangler.eval_direct(
+            direct_result = self.wrangler.eval_direct(
                     self.traversal.target_boxes,
                     self.traversal.from_sep_close_bigger_starts,
                     self.traversal.from_sep_close_bigger_lists,
                     self.src_weights)
+            return direct_result
 
-            self.recorder.add("eval_direct", timing_future)
 
-            self.potentials = self.potentials + direct_result
+        return None
         '''
 
     # }}}
@@ -520,7 +548,7 @@ class TimingRecorder(object):
 
 # vim: filetype=pyopencl:fdm=marker
 
-
+'''
 
 
 
