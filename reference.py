@@ -594,7 +594,8 @@ def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=False):
     from boxtree import TreeBuilder
     tb = TreeBuilder(ctx)
 
-    tree, _ = tb(queue, sources,targets=targets,
+    tree, _ = tb(queue, sources,
+                 #targets=targets,
             max_particles_in_box=30,
             #target_radii=target_radii,stick_out_factor=0.25,
             debug=True)
