@@ -1,15 +1,16 @@
 from typing import Type
 
 
-from charm4py import charm, Chare, Group, Reducer,Array
-from my_own_test import Mytest
+from charm4py import charm, Chare, Group, Reducer,Array,threaded,ArrayMap
+from separate_data_structure.my_own_test import Mytest
 import numpy as np
 from boxtree import *
-from my_own_fmm import *
+from separate_data_structure.my_own_fmm import *
 from time import time
 
 class MyChare(Chare):
-    def __init__(self):
+    def __init__(self,total):
+        self.total = total
         self.driver = None
         self.flag = None
         self.time = None
@@ -19,29 +20,42 @@ class MyChare(Chare):
         self.flag = flag
     def time_setter(self,time):
         self.time = time
+
+    @threaded
     def work(self):
 
         if self.flag == "467":
-            print("step467")
+            start = time()
+            print("step467 on "+str( charm.myPe()))
             #self.driver.step4()
             #self.driver.step6()
             self.contribute(self.driver.step4(), Reducer.sum, self.thisProxy[0].collectResult)
-        if self.flag == "3":
-            print("step3")
-            self.contribute(self.driver.step3(), Reducer.sum, self.thisProxy[0].collectResult)
-        if self.flag == "5":
+            print("step467: " + str(time() - start))
+        elif self.flag == "3":
+            start = time()
+            #self.flag = 100
+            print("step3 on "+str( charm.myPe()))
+            result = self.driver.step3()
+            print(result)
+            self.contribute(result, Reducer.sum, self.thisProxy[0].collectResult)
+            print("step3: "+ str(time() - start))
+        elif self.flag == "5":
         #print("adjnaskaajsdnkjsanksaksnkajnk")
-            print("step5")
+            start = time()
+            print("step5 on "+str(charm.myPe()))
             self.contribute(self.driver.step5(), Reducer.sum, self.thisProxy[0].collectResult)
+            print("step5: " + str(time() - start))
         else:
-            self.contribute(np.zeros(3000000), Reducer.sum, self.thisProxy[0].collectResult)
+            self.contribute(np.zeros(self.total), Reducer.sum, self.thisProxy[0].collectResult)
 
     def collectResult(self, result):
 
         result = self.driver.wrangler.reorder_potentials(result)
+        result = self.driver.wrangler.finalize_potentials(result)
         end = time()
+        #print(result)
         print( end- self.time)
-        assert(result == 3000000).all()
+        assert(result == self.total).all()
 
 
         exit()
@@ -62,16 +76,30 @@ class Distributed_Driver(Chare):
 
 
 
+class WorkerMap(ArrayMap):
+    def procNum(self, index):
+        #print(index)
+        return (index[0] % (charm.numPes() - 1)) + 1
 
 
 
 def main(args):
+
     my = Mytest()
     tree = my.tree
     driver = my.cal()
+
     ti = time()
+    my_array = Array(MyChare,args=[tree.nsources], dims=4,map=Group(WorkerMap))
+
+    my_array[1].summation_setter(driver)
+    my_array[1].flag_setter("3")
+    my_array[1].work()
+
     driver.step21()
     driver.step22()
+    start = time()
+    print(start - ti)
 
     # create one instance of MyChare on every processor
     #my_group = Group(MyChare)
@@ -84,26 +112,30 @@ def main(args):
     # among all cores by the runtime
 
     #my_2d_array = Array(MyChare, (2, 2))
+    #charm.awaitCreation(my_array)
 
-    #charm.awaitCreation(my_group, my_array, my_2d_array)
+    #while(True):
+    #    pass
     #print("###############################3")
     #charm.awaitCreation(first)
 
-    my_array = Group(MyChare)
+
     #charm.awaitCreation(my_array)
 
-    from CustomGreen import CustomConstantOneExpansionWrangler
+    from separate_data_structure.CustomGreen import CustomConstantOneExpansionWrangler
     c = CustomConstantOneExpansionWrangler(tree)
     my_array[0].time_setter(ti)
     my_array[0].summation_setter(driver)
-    my_array[1].summation_setter(driver)
-    my_array[1].flag_setter("3")
+
     my_array[2].summation_setter(driver)
     my_array[2].flag_setter("467")
     my_array[3].summation_setter(driver)
     my_array[3].flag_setter("5")
 
-    my_array.work()
+    my_array[0].work()
+    my_array[2].work()
+    my_array[3].work()
+
 
 
 
@@ -116,4 +148,5 @@ def main(args):
 
 
 if __name__ == "__main__":
+    #print(time())
     charm.start(main)  # call main([]) in interactive mode
