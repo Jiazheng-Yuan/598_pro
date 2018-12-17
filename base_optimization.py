@@ -27,20 +27,16 @@ class MyChare(Chare):
         if self.flag == "467":
             start = time()
             print("step467 on "+str( charm.myPe()))
-            #self.driver.step4()
-            #self.driver.step6()
             self.contribute(self.driver.step4(), Reducer.sum, self.thisProxy[0].collectResult)
             print("step467: " + str(time() - start))
         elif self.flag == "3":
             start = time()
-            #self.flag = 100
             print("step3 on "+str( charm.myPe()))
             result = self.driver.step3()
             print(result)
             self.contribute(result, Reducer.sum, self.thisProxy[0].collectResult)
             print("step3: "+ str(time() - start))
         elif self.flag == "5":
-        #print("adjnaskaajsdnkjsanksaksnkajnk")
             start = time()
             print("step5 on "+str(charm.myPe()))
             self.contribute(self.driver.step5(), Reducer.sum, self.thisProxy[0].collectResult)
@@ -53,7 +49,6 @@ class MyChare(Chare):
         result = self.driver.wrangler.reorder_potentials(result)
         result = self.driver.wrangler.finalize_potentials(result)
         end = time()
-        #print(result)
         print( end- self.time)
         assert(result == self.total).all()
 
@@ -78,7 +73,6 @@ class Distributed_Driver(Chare):
 
 class WorkerMap(ArrayMap):
     def procNum(self, index):
-        #print(index)
         return (index[0] % (charm.numPes() - 1)) + 1
 
 
@@ -98,31 +92,10 @@ def main(args):
 
     driver.step21()
     driver.step22()
-    start = time()
-    print(start - ti)
-
-    # create one instance of MyChare on every processor
-    #my_group = Group(MyChare)
-
-    # create 3 instances of MyChare, distributed among the cores by the runtime
-
-    #first = MyChare()
-
-    # create 2 x 2 instances of MyChare, indexed using 2D index and distributed
-    # among all cores by the runtime
-
-    #my_2d_array = Array(MyChare, (2, 2))
-    #charm.awaitCreation(my_array)
-
-    #while(True):
-    #    pass
-    #print("###############################3")
-    #charm.awaitCreation(first)
 
 
-    #charm.awaitCreation(my_array)
 
-    from separate_data_structure.CustomGreen import CustomConstantOneExpansionWrangler
+    from CustomGreen import CustomConstantOneExpansionWrangler
     c = CustomConstantOneExpansionWrangler(tree)
     my_array[0].time_setter(ti)
     my_array[0].summation_setter(driver)
