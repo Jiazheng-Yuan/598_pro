@@ -80,7 +80,7 @@ class Mytest:
                 max_particles_in_box=30,
                 #target_radii=target_radii,
                 #stick_out_factor=0.25,
-                debug=True )
+                debug=True)
 
         from boxtree.traversal import FMMTraversalBuilder
         tbuild = FMMTraversalBuilder(ctx)

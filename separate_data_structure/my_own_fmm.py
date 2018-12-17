@@ -141,6 +141,7 @@ class My_own_fmm:
     # }}}
 
     # {{{ "Stage 4:" translate separated siblings' ("list 2") mpoles to local
+
     #4,6,7 combined because this is a parallel section, independent of other parts
     def step4(self):
         local_exps = self.wrangler.multipole_to_local(
@@ -183,6 +184,18 @@ class My_own_fmm:
             self.traversal.from_sep_bigger_starts,
             self.traversal.from_sep_bigger_lists,
             self.src_weights)
+    def step6_extra(self):
+
+        if self.traversal.from_sep_close_bigger_starts is not None:
+            direct_result = self.wrangler.eval_direct(
+                    self.traversal.target_boxes,
+                    self.traversal.from_sep_close_bigger_starts,
+                    self.traversal.from_sep_close_bigger_lists,
+                    self.src_weights)
+            return direct_result
+
+
+        return None
     def multicore_separate_step4(self,total_processors,part):
         return self.wrangler.multipole_to_local_multicore(
             self.traversal.level_start_target_or_target_parent_box_nrs,
@@ -242,30 +255,8 @@ class My_own_fmm:
     # }}}
 
     # {{{ "Stage 6:" form locals for separated bigger source boxes ("list 4")
-    def step6(self):
-        local_result = self.wrangler.form_locals(
-                self.traversal.level_start_target_or_target_parent_box_nrs,
-                self.traversal.target_or_target_parent_boxes,
-                self.traversal.from_sep_bigger_starts,
-                self.traversal.from_sep_bigger_lists,
-                self.src_weights)
-
-        self.recorder.add("form_locals", self.timing_future)
-
-        local_exps = self.local_exps + local_result
-        return local_exps
-    def step6_extra(self):
-
-        if self.traversal.from_sep_close_bigger_starts is not None:
-            direct_result = self.wrangler.eval_direct(
-                    self.traversal.target_boxes,
-                    self.traversal.from_sep_close_bigger_starts,
-                    self.traversal.from_sep_close_bigger_lists,
-                    self.src_weights)
-            return direct_result
 
 
-        return None
         '''
 
     # }}}
