@@ -191,7 +191,6 @@ class CustomConstantOneExpansionWrangler(object):
     def eval_multipoles(self,
             target_boxes_by_source_level, from_sep_smaller_nonsiblings_by_level,
             mpole_exps):
-        ti = time()
         pot = self.output_zeros()
         ops = 0
 
@@ -208,7 +207,6 @@ class CustomConstantOneExpansionWrangler(object):
 
                 pot[tgt_pslice] += contrib
                 ops += pot[tgt_pslice].size * (end - start)
-        print("time for first step of 5 is:"+str(time() - ti))
         return pot#, self.timing_future(ops)
 
     def form_locals(self,

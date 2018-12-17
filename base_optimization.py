@@ -21,7 +21,6 @@ class MyChare(Chare):
     def time_setter(self,time):
         self.time = time
 
-    @threaded
     def work(self):
 
         if self.flag == "467":
@@ -112,14 +111,5 @@ def main(args):
 
 
 
-
-    #future = my_array.work(li, ret=True)
-    #individual = MyChare
-
-    #individual
-
-
-
 if __name__ == "__main__":
-    #print(time())
     charm.start(main)  # call main([]) in interactive mode
