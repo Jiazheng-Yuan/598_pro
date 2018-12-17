@@ -6,7 +6,7 @@ class step3_driver:
         self.neighbor_source_boxes_starts = neighbor_source_boxes_starts
         self.neighbor_source_boxes_lists = neighbor_source_boxes_lists
         self.src_weights = src_weights
-        self.wrangler = step3_wrangler(tree.nboxes,tree.ntargets,
+        self.wrangler = step3_or_5_wrangler(tree.nboxes,tree.ntargets,
                                        tree.box_source_starts,tree.box_source_counts_nonchild,tree.box_target_starts,
                                        tree.box_target_counts_nonchild)
     def multicore_step3(self,total_processors,part):
@@ -20,7 +20,7 @@ class step3_driver:
         return direct_interaction
 
 
-class step3_wrangler:
+class step3_or_5_wrangler:
     def __init__(self,nboxes,ntargets,box_source_starts,box_source_counts_nonchild,box_target_starts,box_target_counts_nonchild):
         self.nboxes = nboxes
         self.ntargets = ntargets

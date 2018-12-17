@@ -3,6 +3,7 @@ from typing import Type
 from step3_driver import step3_driver
 from step4_driver import step4_driver
 from step6_driver import step6_driver
+from step5_driver import step5_with_extent_driver
 from charm4py import charm, Chare, Group, Reducer,Array,threaded,ArrayMap,Options
 from charm4py import readonlies as ro
 import sys
@@ -55,6 +56,12 @@ class MyChare(Chare):
             print("step6 on "+str(charm.myPe()))
             self.contribute(self.driver.multicore_separate_step6(self.total_processors, self.pos), Reducer.sum, self.future)
             print("step6: " + str(time() - start))
+        elif self.flag == "5":
+        #print("adjnaskaajsdnkjsanksaksnkajnk")
+            start = time()
+            print("step5 on "+str(charm.myPe()))
+            self.contribute(self.driver.step5_with_extent(self.total_processors, self.pos), Reducer.sum, self.future)
+            print("step5: " + str(time() - start))
 
 
 
@@ -77,15 +84,16 @@ def main(args):
 
     very_start = time()
 
-    f = charm.createFuture()
+    f_step3 = charm.createFuture()
     f_step4 = charm.createFuture()
+    f_step5 = charm.createFuture()
     f_step6 = charm.createFuture()
     creation_time = time()
 
     step3_dr = step3_driver(driver.traversal.target_boxes,driver.traversal.neighbor_source_boxes_starts,
                             driver.traversal.neighbor_source_boxes_lists,
                             driver.src_weights,tree)
-    step3_array = Array(MyChare, args=[f,7,step3_dr], dims=7,map=Group(WorkerMap))
+    step3_array = Array(MyChare, args=[f_step3,7,step3_dr], dims=7,map=Group(WorkerMap))
 
 
     for i in range(0,7):
@@ -108,13 +116,25 @@ def main(args):
                              driver.traversal.from_sep_bigger_lists,
                              driver.src_weights,tree)
     step6_array = Array(MyChare, args=[f_step6, 8, step6_dr], dims=8)
+
     for i in range(0,8):
         step4_array[i].index_setter(i)
         step4_array[i].flag_setter("4")
         step6_array[i].index_setter(i)
         step6_array[i].flag_setter("6")
+    if driver.traversal.from_sep_close_smaller_starts is not None:
+        step5_with_extent_dr = step5_with_extent_driver(driver.traversal.target_boxes,
+                                                        driver.traversal.from_sep_close_smaller_starts,
+                                                        driver.traversal.from_sep_close_smaller_lists,
+                                                        driver.src_weights, tree)
+        step5_array = Array(MyChare, args=[f_step5, 8, step5_with_extent_dr], dims=8)
+        for i in range(0, 8):
+            step5_array[i].index_setter(i)
+            step5_array[i].flag_setter("5")
+        step5_array.work()
     step4_array.work()
     step6_array.work()
+
 
     #my_array[1].summation_setter(driver)
     #my_array[1].flag_setter("6")
@@ -123,13 +143,18 @@ def main(args):
 
     tii = time()
 
-    local_result = driver.step5()
+    local_result = driver.separate_step5()
+    if driver.traversal.from_sep_close_smaller_starts is not None:
+        local_result+=f_step5.get()
+
+
+
     print("time to finish step5:"+str(time() - tii))
     if driver.traversal.from_sep_close_bigger_starts is not None:
         step_6_extra = driver.step6_extra()
         print("extra step6 time: "+str(time() - tii))
         local_result += step_6_extra
-    local_result += f.get()
+    local_result += f_step3.get()
     #print(local_result)
     print("time to get local_result:" + str(time() - tii))
 
@@ -139,10 +164,12 @@ def main(args):
     local_exps = driver.wrangler.refine_locals(driver.traversal.level_start_target_or_target_parent_box_nrs,
                                   driver.traversal.target_or_target_parent_boxes,
                                   local_exps)
+    last_Step = time()
     local_result_from_exp = driver.wrangler.eval_locals(
         driver.traversal.level_start_target_box_nrs,
         driver.traversal.target_boxes,
         local_exps)
+    print("last step:"+str(time() - last_Step))
 
 
     #

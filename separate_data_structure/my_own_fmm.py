@@ -212,6 +212,17 @@ class My_own_fmm:
             self.traversal.from_sep_bigger_lists,
             self.src_weights,total_processors,part)
 
+    def separate_step5(self):
+        self.mpole_result = self.wrangler.eval_multipoles(
+            self.traversal.target_boxes_sep_smaller_by_source_level,
+            self.traversal.from_sep_smaller_by_level,
+            self.mpole_exps)
+
+        # self.recorder.add("eval_multipoles", self.timing_future)
+
+        potentials = self.potentials + self.mpole_result
+        return potentials
+
 
         #local_exps = local_exps + local_result
         #self.recorder.add("multipole_to_local", self.timing_future)
@@ -239,6 +250,9 @@ class My_own_fmm:
 
     # these potentials are called beta in [1]
 
+
+        from time import time
+        ti = time()
         if self.traversal.from_sep_close_smaller_starts is not None:
             logger.debug("evaluate separated close smaller interactions directly "
                     "('list 3 close')")
@@ -250,6 +264,7 @@ class My_own_fmm:
                     self.src_weights)
 
             potentials = potentials + direct_result
+        print("time to compute second part of step5:"+str(time() - ti))
         return potentials
 
     # }}}

@@ -8,9 +8,9 @@ class step21_driver:
         self.wrangler = step21_wrangler(tree.nboxes,tree.box_source_starts,tree.box_source_counts_nonchild)
     def multicore_step21(self,total_processors,part):
         return self.wrangler.multicore_form_multipoles(
-            self.traversal.level_start_source_parent_box_nrs,
-            self.traversal.source_parent_boxes,
-            self.mpole_exps,total_processors,part)
+            self.level_start_source_box_nrs,
+            self.source_boxes,
+            self.src_weights,total_processors,part)
 
 class step21_wrangler:
     def __init__(self,nboxes,box_source_starts,box_source_counts_nonchild):
