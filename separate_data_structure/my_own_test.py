@@ -119,7 +119,7 @@ class Mytest:
         #pot = drive_fmm(host_trav, wrangler, weights)
         #assert (pot == weights_sum).all()
 
-        from separate_data_structure.my_own_fmm import My_own_fmm
+        from my_own_fmm import My_own_fmm
         #driver = My_own_fmm(host_trav,wrangler,weights,self)
         #from second_optimized_fmm import My_own_fmm
         driver = My_own_fmm(host_trav, wrangler, weights, self)
