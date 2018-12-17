@@ -57,7 +57,7 @@ class Mytest:
 
         dims = 2
         nsources = 3000000
-        ntargets = 1000
+        ntargets = 3000000
         dtype = np.float32
 
         from boxtree.fmm import drive_fmm
