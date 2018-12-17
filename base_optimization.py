@@ -25,21 +25,21 @@ class MyChare(Chare):
 
         if self.flag == "467":
             start = time()
-            print("step467 on "+str( charm.myPe()))
+            print("step467 on processor:"+str( charm.myPe()))
             self.contribute(self.driver.step4(), Reducer.sum, self.thisProxy[0].collectResult)
-            print("step467: " + str(time() - start))
+            print("step467 took " + str(time() - start)+" seconds to finish")
         elif self.flag == "3":
             start = time()
-            print("step3 on "+str( charm.myPe()))
+            print("step3 on processor:"+str( charm.myPe()))
             result = self.driver.step3()
             print(result)
             self.contribute(result, Reducer.sum, self.thisProxy[0].collectResult)
-            print("step3: "+ str(time() - start))
+            print("step3 took "+ str(time() - start)+" seconds to finish")
         elif self.flag == "5":
             start = time()
-            print("step5 on "+str(charm.myPe()))
+            print("step5 on processor:"+str(charm.myPe()))
             self.contribute(self.driver.step5(), Reducer.sum, self.thisProxy[0].collectResult)
-            print("step5: " + str(time() - start))
+            print("step5 took " + str(time() - start) +" seconds to finish")
         else:
             self.contribute(np.zeros(self.total), Reducer.sum, self.thisProxy[0].collectResult)
 
@@ -53,20 +53,6 @@ class MyChare(Chare):
 
 
         exit()
-
-def hello(args):
-    my_group = Group(MyChare)
-    my_group.work(3)
-
-class Distributed_Driver(Chare):
-    def __init__(self):
-
-        pass
-
-    def work(self, driver,flag):
-        data = 3
-        print(data)
-        self.contribute(data,Reducer.sum,self.sumation_chare.collectResult)
 
 
 
