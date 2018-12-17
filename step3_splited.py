@@ -5,10 +5,10 @@ from charm4py import charm, Chare, Group, Reducer,Array,threaded,ArrayMap,Option
 from charm4py import readonlies as ro
 import sys
 
-from separate_data_structure.my_own_test import Mytest
+from my_own_test import Mytest
 import numpy as np
 from boxtree import *
-from separate_data_structure.my_own_fmm import *
+from my_own_fmm import *
 from time import time
 
 class MyChare(Chare):
