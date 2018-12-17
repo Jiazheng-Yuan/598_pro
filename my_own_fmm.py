@@ -253,7 +253,7 @@ class My_own_fmm:
 
 
         from time import time
-        ti = time()
+
         if self.traversal.from_sep_close_smaller_starts is not None:
             logger.debug("evaluate separated close smaller interactions directly "
                     "('list 3 close')")
@@ -265,7 +265,7 @@ class My_own_fmm:
                     self.src_weights)
 
             potentials = potentials + direct_result
-        print("time to compute second part of step5:"+str(time() - ti))
+
         return potentials
 
     # }}}

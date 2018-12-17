@@ -10,7 +10,6 @@ from time import time
 
 class MyChare(Chare):
     def __init__(self):
-        #print(str(self.thisIndex) + "   " + str(charm.myPe()))
         self.driver = None
         self.flag = None
         self.time = None
@@ -29,13 +28,12 @@ class MyChare(Chare):
         if self.flag == "3":
             print("step3 " +  str(charm.myPe()))
             self.contribute(self.driver.step3(), Reducer.sum, f)
-            print("step3 time:" + str(time() - start))
+            print("step3 time to finish:" + str(time() - start))
 
         elif self.flag == "5":
-            #print("adjnaskaajsdnkjsanksaksnkajnk")
-            print("step5 " +  str(charm.myPe()))
+            print("step5 on processor: " +  str(charm.myPe()))
             self.contribute(self.driver.step5(), Reducer.sum, f)
-            print("step5 time:" + str(time() - start))
+            print("step5 time to finish:" + str(time() - start))
 
         #else:
         #    self.contribute(np.zeros(3000000), Reducer.sum, f)
@@ -45,44 +43,22 @@ class MyChare(Chare):
         start = time()
         print(str(self.thisIndex) + "   " + str(charm.myPe()))
         if self.flag == "4":
-            print("step4 "+  str(charm.myPe()))
+            print("step4 "+ str(charm.myPe()))
             self.contribute(self.driver.separate_step4(), Reducer.sum, f)
-            print("step4 time:" + str(time() - start))
+            print("step4 time to finish:" + str(time() - start))
 
         elif self.flag == "6":
-            # print("adjnaskaajsdnkjsanksaksnkajnk")
-            print("step6 "+  str(charm.myPe()))
+            print("step6 "+ str(charm.myPe()))
             self.contribute(self.driver.separate_step6(), Reducer.sum, f)
-            print("step6 time:" + str(time() - start))
-        #else:
-        #    self.contribute(np.zeros(3000000), Reducer.sum, f)
+            print("step6 time to finish:" + str(time() - start))
 
 class WorkerMap(ArrayMap):
     def procNum(self, index):
-        #print(index)
         return (index[0] % (charm.numPes() - 1)) + 1
 
 class DirectWorkerMap(ArrayMap):
     def procNum(self, index):
-        #print(index)
         return (index[0] % (charm.numPes() - 1)) + 3
-
-
-def hello(args):
-    my_group = Group(MyChare)
-    my_group.work(3)
-
-class local_exp_eval(Chare):
-    def __init__(self):
-
-        self.flag = None
-
-    def work(self, f):
-        if self.flag == "4":
-            self.contribute(self.driver.separate_step4(), Reducer.sum, f)
-        elif self.flag == "6":
-            self.contribute(self.driver.separate_step4(), Reducer.sum, f)
-
 
 def main(args):
     my = Mytest()
@@ -110,7 +86,6 @@ def main(args):
     direct_evl_workers[1].summation_setter(driver)
     direct_evl_workers[1].flag_setter('6')
     direct_evl_workers[1].sum_local_exp(local_result_future)
-    #direct_result_future = charm.createFuture()
 
     local_exps = local_result_future.get()
     last_step_start = time()

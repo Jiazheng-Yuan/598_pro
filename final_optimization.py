@@ -34,16 +34,13 @@ class MyChare(Chare):
         self.time = time
     def index_setter(self,index):
         self.pos = index
-    #@threaded
     def work(self):
 
         if self.flag == "4":
             start = time()
-            print("step4 on "+str( charm.myPe()))
-            #self.driver.step4()
-            #self.driver.step6()
+            print("step4 on processor"+str( charm.myPe()))
             self.contribute(self.driver.multicore_separate_step4(self.total_processors,self.pos), Reducer.sum, self.future)
-            print("step4: " + str(time() - start))
+            print("step4 time to finish: " + str(time() - start)+" on processor "+str(str(charm.myPe())))
         elif self.flag == "3":
             print("this piece " + str(self.pos) + "   is on processor:" + str(charm.myPe()))
             st = time()
@@ -51,30 +48,22 @@ class MyChare(Chare):
             self.contribute(partial_direct_interaction, Reducer.sum, self.future)
             print("time to calculate " + str(self.pos) + "th piece of the direct interaction:" + str(time() - st))
         elif self.flag == "6":
-        #print("adjnaskaajsdnkjsanksaksnkajnk")
             start = time()
-            print("step6 on "+str(charm.myPe()))
+            print("step6 on processor "+str(charm.myPe()))
             self.contribute(self.driver.multicore_separate_step6(self.total_processors, self.pos), Reducer.sum, self.future)
-            print("step6: " + str(time() - start))
+            print("step6 time to finish: " + str(time() - start)+" on processor "+str(str(charm.myPe())))
         elif self.flag == "5":
-        #print("adjnaskaajsdnkjsanksaksnkajnk")
             start = time()
             print("step5 on "+str(charm.myPe()))
             self.contribute(self.driver.step5_with_extent(self.total_processors, self.pos), Reducer.sum, self.future)
-            print("step5: " + str(time() - start))
+            print("step5 time to finish: " + str(time() - start)+" on processor "+str(str(charm.myPe())))
 
 
 
 
 class WorkerMap(ArrayMap):
     def procNum(self, index):
-        #print(index)
         return (index[0] % (charm.numPes() - 1)) + 1
-class ExpWorkerMap(ArrayMap):
-    def procNum(self, index):
-        #print(index)
-        return (index[0] % (charm.numPes() - 1)) + 1
-
 
 def main(args):
 
@@ -88,7 +77,6 @@ def main(args):
     f_step4 = charm.createFuture()
     f_step5 = charm.createFuture()
     f_step6 = charm.createFuture()
-    creation_time = time()
 
     step3_dr = step3_driver(driver.traversal.target_boxes,driver.traversal.neighbor_source_boxes_starts,
                             driver.traversal.neighbor_source_boxes_lists,
@@ -100,10 +88,8 @@ def main(args):
         step3_array[i].index_setter(i)
         step3_array[i].flag_setter("3")
     step3_array.work()
-    ti = time()
     driver.step21()
     driver.step22()
-    print("step2 time: "+str(time() - ti))
     step4_dr = step4_driver(tree.nboxes,driver.traversal.level_start_target_or_target_parent_box_nrs,
                             driver.traversal.target_or_target_parent_boxes,
                             driver.traversal.from_sep_siblings_starts,
@@ -136,29 +122,15 @@ def main(args):
     step6_array.work()
 
 
-    #my_array[1].summation_setter(driver)
-    #my_array[1].flag_setter("6")
-    #my_array[1].driver = driver
-
-
-    tii = time()
-
     local_result = driver.separate_step5()
     if driver.traversal.from_sep_close_smaller_starts is not None:
         local_result+=f_step5.get()
 
 
-
-    print("time to finish step5:"+str(time() - tii))
     if driver.traversal.from_sep_close_bigger_starts is not None:
         step_6_extra = driver.step6_extra()
-        print("extra step6 time: "+str(time() - tii))
         local_result += step_6_extra
     local_result += f_step3.get()
-    #print(local_result)
-    print("time to get local_result:" + str(time() - tii))
-
-
     local_exps = f_step6.get() + f_step4.get()
 
     local_exps = driver.wrangler.refine_locals(driver.traversal.level_start_target_or_target_parent_box_nrs,
@@ -178,16 +150,12 @@ def main(args):
     print("at the end:"+str(end - very_start))
 
     assert (result == driver.src_weights.sum() ).all()
-    #charm.printStats()
+
     exit()
 
 
 
 
 if __name__ == "__main__":
-    #
-    #Options.PROFILING = True
-    ti = time()
-    charm.start(main)  # call main([]) in interactive mode
-    #main("a")
-    #print(time() - ti)
+
+    charm.start(main)

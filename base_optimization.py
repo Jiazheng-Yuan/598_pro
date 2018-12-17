@@ -32,7 +32,6 @@ class MyChare(Chare):
             start = time()
             print("step3 on processor:"+str( charm.myPe()))
             result = self.driver.step3()
-            print(result)
             self.contribute(result, Reducer.sum, self.thisProxy[0].collectResult)
             print("step3 took "+ str(time() - start)+" seconds to finish")
         elif self.flag == "5":
