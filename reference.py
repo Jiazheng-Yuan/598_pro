@@ -615,7 +615,6 @@ def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=False):
     ti = time()
     pot = drive_fmm(host_trav, wrangler, weights)
     print(time() - ti)
-    print(pot)
     assert (pot == weights_sum).all()
 
 # }}}
