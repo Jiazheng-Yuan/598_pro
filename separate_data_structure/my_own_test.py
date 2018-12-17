@@ -36,7 +36,7 @@ from boxtree.tools import (  # noqa: F401
         make_uniform_particle_array as p_uniform,
         particle_array_to_host,
         ConstantOneExpansionWrangler)
-from CustomGreen import CustomConstantOneExpansionWrangler
+from separate_data_structure.CustomGreen import CustomConstantOneExpansionWrangler
 
 import logging
 logger = logging.getLogger(__name__)
