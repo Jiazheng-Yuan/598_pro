@@ -35,8 +35,6 @@ class MyChare(Chare):
             self.contribute(self.driver.step5(), Reducer.sum, f)
             print("step5 time to finish:" + str(time() - start))
 
-        #else:
-        #    self.contribute(np.zeros(3000000), Reducer.sum, f)
 
 
     def sum_local_exp(self, f):
@@ -108,78 +106,6 @@ def main(args):
     print(end - ti)
     assert (result == my.tree.nsources).all()
     exit()
-
-    #direct_result_future.sum_local_exp(local_result_future)
-
-    # create one instance of MyChare on every processor
-    #my_group = Group(MyChare)
-
-    # create 3 instances of MyChare, distributed among the cores by the runtime
-
-    #first = MyChare()
-
-    # create 2 x 2 instances of MyChare, indexed using 2D index and distributed
-    # among all cores by the runtime
-
-    #my_2d_array = Array(MyChare, (2, 2))
-
-    #charm.awaitCreation(my_group, my_array, my_2d_array)
-    #print("###############################3")
-    #charm.awaitCreation(first)
-
-    '''
-
-    my_array_3_5_4_6 = Array(MyChare, (3, 2))
-
-
-    #charm.awaitCreation(my_array)
-
-    from CustomGreen import CustomConstantOneExpansionWrangler
-    c = CustomConstantOneExpansionWrangler(tree)
-    my_array_3_5_4_6[(0, 0)].summation_setter(driver)#sum direct result
-    my_array_3_5_4_6[(0, 0)].flag_setter('sum_3_5')
-    my_array_3_5_4_6[(0, 1)].summation_setter(driver)
-    my_array_3_5_4_6[(0, 1)].flag_setter("7")
-    my_array_3_5_4_6[(1,0)].summation_setter(driver)
-    my_array_3_5_4_6[(1,0)].flag_setter('3')
-    my_array_3_5_4_6[(1,1)].summation_setter(driver)
-    my_array_3_5_4_6[(1,1)].flag_setter("5")
-    my_array_3_5_4_6[(2,0)].summation_setter(driver)
-    my_array_3_5_4_6[(2,0)].flag_setter("4")
-    my_array_3_5_4_6[(2,1)].summation_setter(driver)
-    my_array_3_5_4_6[(2,1)].flag_setter("6")
-
-    #direct_result_f = charm.createFuture()
-    #local_exps_f = charm.createFuture()
-    my_array_3_5_4_6.direct_result(direct_result_f, ret=True)
-    my_array_3_5_4_6.sum_local_exp(local_exps_f, ret=True)
-
-    direct_result = direct_result_f.get()
-    local_exps = local_exps_f.get()
-
-    end = time()
-    print(end - ti)
-    local_exps = driver.wrangler.refine_locals(driver.traversal.level_start_target_or_target_parent_box_nrs,
-                                             driver.traversal.target_or_target_parent_boxes,
-                                             local_exps)
-    local_result = driver.wrangler.eval_locals(
-        driver.traversal.level_start_target_box_nrs,
-        driver.traversal.target_boxes,
-        local_exps)
-    result = driver.wrangler.reorder_potentials( direct_result + local_result)
-    end = time()
-    print(end - ti)
-    assert (result == 3000000).all()
-    exit()
-    '''
-
-
-
-
-    #future = my_array.work(li, ret=True)
-    #individual = MyChare
-
-    #individual
 
 
 

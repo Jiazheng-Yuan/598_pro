@@ -42,7 +42,7 @@ class MyChare(Chare):
             self.contribute(self.driver.multicore_separate_step4(self.total_processors,self.pos), Reducer.sum, self.future)
             print("step4 time to finish: " + str(time() - start)+" on processor "+str(str(charm.myPe())))
         elif self.flag == "3":
-            print("this piece " + str(self.pos) + "   is on processor:" + str(charm.myPe()))
+            print("step3 on processor " + str(charm.myPe()))
             st = time()
             partial_direct_interaction = self.driver.multicore_step3(self.total_processors, self.pos)
             self.contribute(partial_direct_interaction, Reducer.sum, self.future)
@@ -141,13 +141,15 @@ def main(args):
         driver.traversal.level_start_target_box_nrs,
         driver.traversal.target_boxes,
         local_exps)
-    print("last step:"+str(time() - last_Step))
+
 
 
     #
-    end = time()
+
     result = driver.wrangler.reorder_potentials(local_result_from_exp + local_result)
-    print("at the end:"+str(end - very_start))
+    result = driver.wrangler.finalize_potentials(result)
+    end = time()
+    print("total time:"+str(end - very_start))
 
     assert (result == driver.src_weights.sum() ).all()
 
