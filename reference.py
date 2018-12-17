@@ -561,7 +561,7 @@ def test_interaction_list_particle_count_thresholding(ctx_getter, enable_extents
 # {{{ test fmm with float32 dtype
 
 @pytest.mark.parametrize("enable_extents", [True, False])
-def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=False):
+def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=True):
     from time import time
 
 
@@ -575,8 +575,8 @@ def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=False):
     logging.basicConfig(level=logging.INFO)
 
     dims = 2
-    nsources = 9000000
-    ntargets = 9000000
+    nsources = 3000000
+    ntargets = 3000000
     dtype = np.float32
 
     from boxtree.fmm import drive_fmm
@@ -595,9 +595,9 @@ def test_fmm_float32(ctx_getter=cl.create_some_context, enable_extents=False):
     tb = TreeBuilder(ctx)
 
     tree, _ = tb(queue, sources,
-                 #targets=targets,
+                 targets=targets,
             max_particles_in_box=30,
-            #target_radii=target_radii,stick_out_factor=0.25,
+            target_radii=target_radii,stick_out_factor=0.25,
             debug=True)
 
     from boxtree.traversal import FMMTraversalBuilder
