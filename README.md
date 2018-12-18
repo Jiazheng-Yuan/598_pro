@@ -41,3 +41,5 @@ p8 refers to  8 processors to start with. With less than 8 processors it might g
 
 Dependencies: Boxtree,Charm4py,Pyopencl, python version used:3.7.1
 
+file [*my_own_test.py*](my_own_test.py) contains the test
+

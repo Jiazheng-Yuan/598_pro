@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4f6c26fa-840f-4118-a585-7f0108ae1d41" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/CustomGreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/CustomGreen.py" afterDir="false" />
-    </list>
+    <list default="true" id="4f6c26fa-840f-4118-a585-7f0108ae1d41" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -216,7 +214,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-176" y="-1016" width="1440" height="877" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25679544" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
