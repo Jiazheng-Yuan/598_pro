@@ -132,34 +132,5 @@ class Mytest:
 # }}}
 
 
-# You can test individual routines by typing
-# $ python test_fmm.py 'test_routine(cl.create_some_context)'
-
-if __name__ == "__main__":
-    import sys
-    '''
-    if len(sys.argv) > 1:
-        exec(sys.argv[1])
-    else:
-        from pytest import main
-        main([__file__])
-        '''
-
-    mt = Mytest()
-    d = mt.cal()
-
-
-    d.step21()
-    d.step22()
-    d.step3()
-    d.step4()
-    d.step6()
-    d.step7()
-    d.step5()
-
-    d.step8()
-    #Process(target=d.step9()).start()
-    mt.check()
-
 
 # vim: fdm=marker

@@ -121,7 +121,7 @@ def main(args):
     result = driver.wrangler.reorder_potentials(local_result_from_exp + local_result)
     result = driver.wrangler.finalize_potentials(result)
     print("at the end:"+str(end - very_start))
-    assert (result == tree.nsources).all()
+    assert (result == driver.src_weights.sum()).all()
     exit()
 
 

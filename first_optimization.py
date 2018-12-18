@@ -68,7 +68,7 @@ def main(args):
     driver = my.cal()
 
     ti = time()
-    my_array = Array(MyChare,args=[tree.nsources], dims=4,map=Group(WorkerMap))
+    my_array = Array(MyChare,args=[driver.src_weights.sum()], dims=4,map=Group(WorkerMap))
 
     my_array[1].summation_setter(driver)
     my_array[1].flag_setter("3")

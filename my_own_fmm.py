@@ -268,53 +268,6 @@ class My_own_fmm:
 
         return potentials
 
-    # }}}
-
-    # {{{ "Stage 6:" form locals for separated bigger source boxes ("list 4")
-
-
-        '''
-
-    # }}}
-
-    # {{{ "Stage 7:" propagate local_exps downward
-    def step7(self):
-        self.local_exps, self.timing_future = self.wrangler.refine_locals(
-                self.traversal.level_start_target_or_target_parent_box_nrs,
-                self.traversal.target_or_target_parent_boxes,
-                self.local_exps)
-        local_result = self.wrangler.eval_locals(
-            self.traversal.level_start_target_box_nrs,
-            self.traversal.target_boxes,
-            self.local_exps)
-
-
-        #self.recorder.add("refine_locals", self.timing_future)
-        return self.local_exps
-
-    # }}}
-
-    # {{{ "Stage 8:" evaluate locals
-    def step8(self):
-
-
-
-        #self.recorder.add("eval_locals", self.timing_future)
-        # }}}
-        self.potentials = self.potentials + local_result
-
-        #self.t3.join()
-        self.potentials = self.potentials + self.direct_interaction
-        result = self.wrangler.reorder_potentials(self.potentials)
-
-        result = self.wrangler.finalize_potentials(result)
-
-        #self.fmm_proc.done()
-        #if self.timing_data is not None:
-        #timing_data.update(recorder.summarize())
-
-        #self.caller.pot =  result
-
 
 # {{{ expansion wrangler interface
 
@@ -555,7 +508,7 @@ class TimingRecorder(object):
 
 # vim: filetype=pyopencl:fdm=marker
 
-'''
+
 
 
 

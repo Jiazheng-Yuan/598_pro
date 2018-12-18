@@ -104,7 +104,7 @@ def main(args):
 
     end = time()
     print(end - ti)
-    assert (result == my.tree.nsources).all()
+    assert (result == driver.src_weights.sum()).all()
     exit()
 
 
