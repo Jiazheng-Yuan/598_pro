@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 # {{{ fmm interaction completeness test
 class Mytest:
 
-    def __init__(self,ctx_getter=cl.create_some_context, enable_extents=True):
+    def __init__(self,ctx_getter=cl.create_some_context, enable_extents=False):
         ctx = ctx_getter()
         queue = cl.CommandQueue(ctx)
 
@@ -56,8 +56,8 @@ class Mytest:
         logging.basicConfig(level=logging.INFO)
 
         dims = 2
-        nsources = 3000000
-        ntargets = 3000000
+        nsources = 9000000
+        ntargets = 9000000
         dtype = np.float32
 
         from boxtree.fmm import drive_fmm
@@ -76,10 +76,10 @@ class Mytest:
         tb = TreeBuilder(ctx)
 
         tree, _ = tb(queue, sources,
-                targets=targets,
+                #targets=targets,
                 max_particles_in_box=30,
-                target_radii=target_radii,
-                stick_out_factor=0.25,
+                #target_radii=target_radii,
+                #stick_out_factor=0.25,
                 debug=True)
 
         from boxtree.traversal import FMMTraversalBuilder
