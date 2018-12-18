@@ -39,7 +39,6 @@ class MyChare(Chare):
 
     def sum_local_exp(self, f):
         start = time()
-        print(str(self.thisIndex) + "   " + str(charm.myPe()))
         if self.flag == "4":
             print("step4 on processor:"+ str(charm.myPe()))
             self.contribute(self.driver.separate_step4(), Reducer.sum, f)
@@ -100,7 +99,6 @@ def main(args):
 
     result = driver.wrangler.reorder_potentials(direct_result + local_result)
     result = driver.wrangler.finalize_potentials(result)
-    print("last step time" + str(time() - last_step_start))
 
     end = time()
     print(end - ti)
