@@ -26,7 +26,7 @@ class MyChare(Chare):
         start = time()
 
         if self.flag == "3":
-            print("step3 " +  str(charm.myPe()))
+            print("step3 on processor: " +  str(charm.myPe()))
             self.contribute(self.driver.step3(), Reducer.sum, f)
             print("step3 time to finish:" + str(time() - start))
 
@@ -41,12 +41,12 @@ class MyChare(Chare):
         start = time()
         print(str(self.thisIndex) + "   " + str(charm.myPe()))
         if self.flag == "4":
-            print("step4 "+ str(charm.myPe()))
+            print("step4 on processor:"+ str(charm.myPe()))
             self.contribute(self.driver.separate_step4(), Reducer.sum, f)
             print("step4 time to finish:" + str(time() - start))
 
         elif self.flag == "6":
-            print("step6 "+ str(charm.myPe()))
+            print("step6 on processor:"+ str(charm.myPe()))
             self.contribute(self.driver.separate_step6(), Reducer.sum, f)
             print("step6 time to finish:" + str(time() - start))
 
